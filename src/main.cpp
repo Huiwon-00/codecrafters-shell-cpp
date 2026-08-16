@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <unordered_set>
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -10,6 +11,7 @@ int main() {
   while(true){
     std::cout << "$ ";
     std::string command;
+    std::unordered_set<std::string> types = {"exit", "echo", "type"};
     std::getline(std::cin, command);
     if( command == "exit"){
       std::cout << command << std::endl;
@@ -19,7 +21,7 @@ int main() {
       std::cout << command.substr(5) << std::endl;
     }
     else if(command.substr(0, 4) == "type"){
-      if(command.substr(5) == "echo" || command.substr(5) == "exit"){
+      if(types.contains(command.substr(5))){
         std::cout << command.substr(5) << " is a shell builtin" << std::endl;
       }
     }
