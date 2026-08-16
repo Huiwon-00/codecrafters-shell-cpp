@@ -6,11 +6,15 @@ int main() {
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
 
-  // TODO: Uncomment the code below to pass the first stage
+  // TODO: Uncomment the code below to pass the first stage 
   while(true){
     std::cout << "$ ";
     std::string command;
     std::getline(std::cin, command);
+    if( command == "exit"){
+      std::cout << command << std::endl;
+      break;
+    }
     std::cout << command << ": command not found" << std::endl;
   }
   
