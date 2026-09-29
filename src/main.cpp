@@ -2,11 +2,16 @@
 #include <string>
 #include <unordered_set>
 #include <filesystem>
+#include <vector>
+
+namespace fs = std::filesystem;
 
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
+  std::string filepath(std::getenv("PATH"));
+
 
   // TODO: Uncomment the code below to pass the first stage 
   while(true){
@@ -25,6 +30,26 @@ int main() {
       if(types.contains(command.substr(5))){
         std::cout << command.substr(5) << " is a shell builtin" << std::endl;
       }
+      /*
+      std::vector<std::string> paths;
+      int j {0};
+      for(int i = 0; i < filepath.length(); i++){
+        if(filepath[i] == ':'){
+          paths.push_back(filepath.substr(j, i - j));
+          j = i + 1;
+        }
+      }
+      /*
+      for(const auto& entry: fs::directory_iterator(filepath)){
+          if(entry == command.substr(5)){
+            std::cout << "Path: " << entry.path() << "\n";
+          }
+        }
+      
+      else if( command.substr(5) ){
+        ///Check if the file is in given PATH
+      }
+      */
       else{
         std::cout << command.substr(5) << ": not found" << std::endl;
       }
