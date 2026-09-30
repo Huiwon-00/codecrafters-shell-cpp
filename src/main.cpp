@@ -15,7 +15,6 @@ int main() {
   std::string filepath(std::getenv("PATH"));
   // std::cout << filepath << "\n";
 
-  std::cout << "YYYOOO" << "\n";
 
   std::vector<std::string> paths;
   int j {0};
@@ -54,16 +53,19 @@ int main() {
         typeDone = true;
       }
       else if( !typeDone ){
-        std::string fullpath;
+        std::string fullpath ;
         for (std::string p : paths){ 
-          if (access ((p + "\\" + command.substr(5) ).c_str(), X_OK) == 0){
-            fullpath = p + "\\" + command.substr(5);
+          fullpath = p + "\\" + command.substr(5);
+          //std::cout << fullpath << std::endl;
+          if (access (fullpath.c_str(), X_OK) == 0){
             std::cout << command.substr(5) << "is" << fullpath << std::endl;
+            typeDone = true;
             break;
           } 
         } 
+        //std::cout << typeDone << std::endl;
       }
-      else{
+      if(!typeDone){
         std::cout << command.substr(5) << ": not found" << std::endl;
       }
     }
