@@ -27,11 +27,7 @@ int main() {
       paths.push_back(filepath.substr(j));
     }
   }
-  /*
-  for(std::string p : paths) {
-		std::cout << p << std::endl;
-	}
-  */
+
 
   // TODO: Uncomment the code below to pass the first stage 
   while(true){
@@ -63,7 +59,6 @@ int main() {
             break;
           } 
         } 
-        //std::cout << typeDone << std::endl;
       }
       if(!typeDone){
         std::cout << command.substr(5) << ": not found" << std::endl;
@@ -78,14 +73,3 @@ int main() {
 
 
 
-/*
-      for(const auto& entry: fs::directory_iterator(filepath)){
-          if(entry == command.substr(5)){
-            std::cout << "Path: " << entry.path() << "\n";
-          }
-        }
-      
-      else if( command.substr(5) ){
-        ///Check if the file is in given PATH
-      }
-      */
