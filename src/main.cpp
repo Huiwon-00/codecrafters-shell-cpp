@@ -55,7 +55,7 @@ int main() {
       else if( !typeDone ){
         std::string fullpath ;
         for (std::string p : paths){ 
-          fullpath = p + "\\" + command.substr(5);
+          fullpath = p + "/" + command.substr(5);
           //std::cout << fullpath << std::endl;
           if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
             std::cout << command.substr(5) << "is" << fullpath << std::endl;
