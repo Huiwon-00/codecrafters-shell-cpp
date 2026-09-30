@@ -1045,3 +1045,5 @@ dkms.conf
 *.dis
 
 vcpkg_installed
+# VS Code Code Runner scratch file
+tempCodeRunnerFile.*
