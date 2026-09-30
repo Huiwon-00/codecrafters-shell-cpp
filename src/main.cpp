@@ -58,7 +58,7 @@ int main() {
           fullpath = p + "/" + command.substr(5);
           //std::cout << fullpath << std::endl;
           if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
-            std::cout << command.substr(5) << "is" << fullpath << std::endl;
+            std::cout << command.substr(5) << " is " << fullpath << std::endl;
             typeDone = true;
             break;
           } 
