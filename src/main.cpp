@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <vector>
 #include <unistd.h>
+#include <sys/wait.h>
 
 namespace fs = std::filesystem;
 
@@ -101,9 +102,15 @@ int main() {
           arguments_c.push_back(s.data());
         }
         arguments_c.push_back(nullptr);
-
-        execv(fullpath.c_str(), arguments_c.data());
+        pid_t pid = fork();
+        if(pid == 0){
+          execv(fullpath.c_str(), arguments_c.data());
+        }
+        else{
+          waitpid(pid, nullptr, 0);
+        }
       }
+      arguments.clear();
       if(!exCommandDone){
         std::cout << command << ": command not found" << std::endl;
       }
