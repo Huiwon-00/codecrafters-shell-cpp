@@ -3,5 +3,6 @@
     "code-runner.saveFileBeforeRun": true,
     "code-runner.executorMap": {
         "cpp": "cd $workspaceRoot && cmake -B build -S . && cmake --build build && ./build/shell"
-    }
+    },
+    "C_Cpp.default.cppStandard": "c++23"
 }
