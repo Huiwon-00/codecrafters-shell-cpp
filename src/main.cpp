@@ -11,7 +11,7 @@ int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
-
+  std::vector<std::string> arguments;
   std::string filepath(std::getenv("PATH"));
   // std::cout << filepath << "\n";
 
@@ -64,7 +64,50 @@ int main() {
         std::cout << command.substr(5) << ": not found" << std::endl;
       }
     }
-    else std::cout << command << ": command not found" << std::endl;
+    else{
+      std::string exCommand = "";
+      for(char c : command){
+        if( c == ' '){
+          break;
+        }
+        exCommand += c;
+      }
+      
+
+      std::string fullpath;
+      bool exCommandDone = false;
+      for (std::string p : paths){ 
+        fullpath = p + "/" + exCommand;
+        //std::cout << fullpath << std::endl;
+        if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
+          exCommandDone = true;
+          int j {0};
+          for(int i = 0; i < command.length(); i++) {
+            if(command[i] == ' ' ) {
+              arguments.push_back(command.substr(j, i - j));
+              j = i + 1;
+            }
+            else if(i == command.length() - 1 ) {
+              arguments.push_back(command.substr(j));
+            }
+          }
+          break;
+        } 
+      } 
+      
+      if(exCommandDone){
+        std::vector<char*> arguments_c;
+        for(std::string& s: arguments){
+          arguments_c.push_back(s.data());
+        }
+        arguments_c.push_back(nullptr);
+
+        execv(fullpath.c_str(), arguments_c.data());
+      }
+      if(!exCommandDone){
+        std::cout << command << ": command not found" << std::endl;
+      }
+    }
   }
 
   
@@ -72,4 +115,8 @@ int main() {
 
 
 
-
+/*
+std::cout << "Program was passed " << arguments.size() << ".\n";
+        for(int i = 0; i < arguments.size(); i++){
+          std::cout << "Arg #" << i << ": " << arguments[i] << std::endl;
+        } */
