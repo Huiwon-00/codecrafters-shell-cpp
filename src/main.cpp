@@ -57,6 +57,7 @@ int main() {
       std::cout << current_directory <<std::endl;
     }
     else if(keyword == "cd"){
+      std::cout << (current_directory + command.substr(3)) << std::endl;
       if( std::filesystem::exists(current_directory + command.substr(3))){
         current_directory = current_directory + command.substr(3);
       }
