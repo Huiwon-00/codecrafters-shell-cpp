@@ -35,7 +35,7 @@ int main() {
     std::cout << "$ ";
     std::string command;
     std::string current_directory = std::filesystem::current_path().string();
-    std::unordered_set<std::string> types = {"exit", "echo", "type", "pwd"};
+    std::unordered_set<std::string> types = {"exit", "echo", "type", "pwd", "cd"};
     std::getline(std::cin, command);
     std::string keyword;
     for(int i = 0; i < command.length(); i++){
@@ -55,6 +55,14 @@ int main() {
     }
     else if(keyword == "pwd"){
       std::cout << current_directory <<std::endl;
+    }
+    else if(keyword == "cd"){
+      if( std::filesystem::exists(current_directory + command.substr(3))){
+        current_directory = current_directory + command.substr(3);
+      }
+      else{
+        std::cout << "cd: " << command.substr(3) << ": No such file or directory" << std::endl;
+      }
     }
     else if(keyword == "type"){
       bool typeDone = false;
@@ -117,6 +125,7 @@ int main() {
         pid_t pid = fork();
         if(pid == 0){
           execv(fullpath.c_str(), arguments_c.data());
+          std::exit(1);
         }
         else{
           waitpid(pid, nullptr, 0);
