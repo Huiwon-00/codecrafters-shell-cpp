@@ -34,16 +34,29 @@ int main() {
   while(true){
     std::cout << "$ ";
     std::string command;
-    std::unordered_set<std::string> types = {"exit", "echo", "type"};
+    std::string current_directory = std::filesystem::current_path().string();
+    std::unordered_set<std::string> types = {"exit", "echo", "type", "pwd"};
     std::getline(std::cin, command);
+    std::string keyword;
+    for(int i = 0; i < command.length(); i++){
+      if(command[i] == ' '){
+        break;
+      }
+      else{
+        keyword += command[i];
+      }
+    }
     if( command == "exit"){
       std::cout << command << std::endl;
       break;
     }
-    else if(command.substr(0, 4) == "echo"){
+    else if(keyword == "echo"){
       std::cout << command.substr(5) << std::endl;
     }
-    else if(command.substr(0, 4) == "type"){
+    else if(keyword == "pwd"){
+      std::cout << current_directory <<std::endl;
+    }
+    else if(keyword == "type"){
       bool typeDone = false;
       if(types.contains(command.substr(5))){
         std::cout << command.substr(5) << " is a shell builtin" << std::endl;
@@ -65,7 +78,7 @@ int main() {
         std::cout << command.substr(5) << ": not found" << std::endl;
       }
     }
-    else{
+    else{ // check if the command is executable
       std::string exCommand = "";
       for(char c : command){
         if( c == ' '){
@@ -73,7 +86,6 @@ int main() {
         }
         exCommand += c;
       }
-      
 
       std::string fullpath;
       bool exCommandDone = false;
