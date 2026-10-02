@@ -16,7 +16,7 @@ int main() {
   std::string filepath(std::getenv("PATH"));
   // std::cout << filepath << "\n";
 
-
+  std::string current_directory = std::filesystem::current_path().string();
   std::vector<std::string> paths;
   int j {0};
   for(int i = 0; i < filepath.length(); i++) {
@@ -32,9 +32,8 @@ int main() {
 
   // TODO: Uncomment the code below to pass the first stage 
   while(true){
-    std::cout << "$ ";
+    std::cout << current_directory << "$ ";
     std::string command;
-    std::string current_directory = std::filesystem::current_path().string();
     std::unordered_set<std::string> types = {"exit", "echo", "type", "pwd", "cd"};
     std::getline(std::cin, command);
     std::string keyword;
@@ -57,8 +56,14 @@ int main() {
       std::cout << current_directory <<std::endl;
     }
     else if(keyword == "cd"){
-      if( std::filesystem::exists(command.substr(3))){
-        std::filesystem::current_path(command.substr(3));
+      if(command.substr(3) == "~"){
+        std::string HOME(std::getenv("HOME"));
+        current_directory = HOME;
+        std::filesystem::current_path(HOME);
+      }
+     else if( std::filesystem::is_directory(command.substr(3))){
+        current_directory = std::filesystem::canonical(command.substr(3)).string();
+        std::filesystem::current_path(current_directory);
       }
       else{
         std::cout << "cd: " << command.substr(3) << ": No such file or directory" << std::endl;
