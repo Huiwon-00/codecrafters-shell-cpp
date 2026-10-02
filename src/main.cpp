@@ -32,7 +32,7 @@ int main() {
 
   // TODO: Uncomment the code below to pass the first stage 
   while(true){
-    std::cout << current_directory << "$ ";
+    std::cout << "$ ";
     std::string command;
     std::unordered_set<std::string> types = {"exit", "echo", "type", "pwd", "cd"};
     std::getline(std::cin, command);
