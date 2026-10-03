@@ -7,99 +7,93 @@
 #include <sys/wait.h>
 
 namespace fs = std::filesystem;
+std::vector<std::string> split(std::string, char);
+
 
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
-  std::vector<std::string> arguments;
   std::string filepath(std::getenv("PATH"));
   // std::cout << filepath << "\n";
 
   std::string current_directory = std::filesystem::current_path().string();
-  std::vector<std::string> paths;
-  int j {0};
-  for(int i = 0; i < filepath.length(); i++) {
-    if(filepath[i] == ':' ) {
-      paths.push_back(filepath.substr(j, i - j));
-      j = i + 1;
-    }
-    else if(i == filepath.length() - 1 ) {
-      paths.push_back(filepath.substr(j));
-    }
-  }
+  std::vector<std::string> paths = split(filepath, ':');
 
-
-  // TODO: Uncomment the code below to pass the first stage 
   while(true){
     std::cout << "$ ";
     std::string command;
     std::unordered_set<std::string> types = {"exit", "echo", "type", "pwd", "cd"};
-    std::getline(std::cin, command);
-    std::string keyword;
-    for(int i = 0; i < command.length(); i++){
-      if(command[i] == ' '){
-        break;
-      }
-      else{
-        keyword += command[i];
-      }
+    //std::getline(std::cin, command);
+    if(!std::getline(std::cin, command)) break;
+    std::vector<std::string> arguments = split(command, ' ');
+
+    if(arguments.empty()){
+      continue;
     }
-    if( command == "exit"){
-      std::cout << command << std::endl;
+    if( arguments[0] == "exit"){
       break;
     }
-    else if(keyword == "echo"){
-      std::cout << command.substr(5) << std::endl;
+    else if(arguments[0]  == "echo"){
+      if(arguments.size() > 1) {
+        for(size_t i = 1; i < arguments.size(); i++){
+          if(i != arguments.size() - 1){
+              std::cout << arguments[i] << " ";
+          }
+          else{
+            std::cout << arguments[i] << std::endl;
+          }
+        }
+      }
+      else{
+        std::cout << std::endl;
+        continue;
+      }
     }
-    else if(keyword == "pwd"){
+    else if(arguments[0]  == "pwd"){
       std::cout << current_directory <<std::endl;
     }
-    else if(keyword == "cd"){
-      if(command.substr(3) == "~"){
+    else if(arguments[0]  == "cd"){
+      if(arguments.size() == 1 || arguments[1] == "~"){
         std::string HOME(std::getenv("HOME"));
         current_directory = HOME;
         std::filesystem::current_path(HOME);
       }
-     else if( std::filesystem::is_directory(command.substr(3))){
-        current_directory = std::filesystem::canonical(command.substr(3)).string();
+     else if( std::filesystem::is_directory(arguments[1])){
+        current_directory = std::filesystem::canonical(arguments[1]).string();
         std::filesystem::current_path(current_directory);
       }
       else{
-        std::cout << "cd: " << command.substr(3) << ": No such file or directory" << std::endl;
+        std::cout << "cd: " << arguments[1] << ": No such file or directory" << std::endl;
       }
     }
-    else if(keyword == "type"){
+    else if(arguments[0]  == "type"){
       bool typeDone = false;
-      if(types.contains(command.substr(5))){
-        std::cout << command.substr(5) << " is a shell builtin" << std::endl;
+      if(arguments.size() == 1){
+        continue;
+      }
+      if(types.contains(arguments[1])){
+        std::cout << arguments[1] << " is a shell builtin" << std::endl;
         typeDone = true;
       }
       else if( !typeDone ){
         std::string fullpath ;
         for (std::string p : paths){ 
-          fullpath = p + "/" + command.substr(5);
+          fullpath = p + "/" + arguments[1];
           //std::cout << fullpath << std::endl;
           if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
-            std::cout << command.substr(5) << " is " << fullpath << std::endl;
+            std::cout << arguments[1] << " is " << fullpath << std::endl;
             typeDone = true;
             break;
           } 
         } 
       }
       if(!typeDone){
-        std::cout << command.substr(5) << ": not found" << std::endl;
+        std::cout << arguments[1] << ": not found" << std::endl;
       }
     }
     else{ // check if the command is executable
-      std::string exCommand = "";
-      for(char c : command){
-        if( c == ' '){
-          break;
-        }
-        exCommand += c;
-      }
-
+      std::string exCommand = arguments[0];
       std::string fullpath;
       bool exCommandDone = false;
       for (std::string p : paths){ 
@@ -107,16 +101,6 @@ int main() {
         //std::cout << fullpath << std::endl;
         if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
           exCommandDone = true;
-          int j {0};
-          for(int i = 0; i < command.length(); i++) {
-            if(command[i] == ' ' ) {
-              arguments.push_back(command.substr(j, i - j));
-              j = i + 1;
-            }
-            else if(i == command.length() - 1 ) {
-              arguments.push_back(command.substr(j));
-            }
-          }
           break;
         } 
       } 
@@ -136,9 +120,8 @@ int main() {
           waitpid(pid, nullptr, 0);
         }
       }
-      arguments.clear();
-      if(!exCommandDone){
-        std::cout << command << ": command not found" << std::endl;
+      else{
+        std::cout << arguments[0] << ": command not found" << std::endl;
       }
     }
   }
@@ -146,10 +129,20 @@ int main() {
   
 }
 
+std::vector<std::string> split(std::string command, char spliter) {
+    std::vector<std::string> arguments;
+    size_t j {0};
+    for(size_t i = 0; i < command.length(); i++) {
+      if(command[i] == spliter) {
+        if(i > j){
+          arguments.push_back(command.substr(j, i - j));
+        }
+          j = i + 1;
+      }
+      else if(i == command.length() - 1 ) {
+        arguments.push_back(command.substr(j));
+      }
+    }
 
-
-/*
-std::cout << "Program was passed " << arguments.size() << ".\n";
-        for(int i = 0; i < arguments.size(); i++){
-          std::cout << "Arg #" << i << ": " << arguments[i] << std::endl;
-        } */
+    return arguments; // (Only required if returnType is not void)
+}
