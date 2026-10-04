@@ -52,7 +52,7 @@ std::vector<std::string> split(std::string command, char spliter)
       i++;
       arg.push_back(command[i]);
     }
-    else if (command[i] == '\'' )
+    else if (command[i] == '\''&& status == 0)
     {
       if(status == 1){
         status = 0;
