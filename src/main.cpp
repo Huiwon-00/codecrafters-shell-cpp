@@ -49,7 +49,7 @@ std::vector<std::string> split(std::string command, char spliter)
   for (size_t i = 0; i < command.length(); i++)
   {
     if(command[i] == '\\'){
-      if(status == 0){
+      if(status == 0 && i + 1 < command.length()){
         i++;
         arg.push_back(command[i]);
       }else{
