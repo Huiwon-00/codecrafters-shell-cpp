@@ -9,6 +9,9 @@
 
 
 void echo(std::vector<std::string> arguments){
+    for(size_t i = 1; i < arguments.size(); i++){
+        std::cout << "[" << arguments[i] << "]" << std::endl;
+    }
     if(arguments.size() > 1) {
         for(size_t i = 1; i < arguments.size(); i++){
           if(i != arguments.size() - 1){

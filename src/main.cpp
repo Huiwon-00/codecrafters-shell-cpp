@@ -40,17 +40,38 @@ int main()
 
 std::vector<std::string> split(std::string command, char spliter)
 {
+  std::vector<int> nums {0, 1, 2};
+  int status = 0;
   std::vector<std::string> arguments;
   bool insideSQ = false;
   std::string arg;
 
   for (size_t i = 0; i < command.length(); i++)
   {
-    if (command[i] == '\'')
+    if (command[i] == '\'' )
     {
-      insideSQ = !insideSQ;
+      if(status == 1){
+        status = 0;
+      }
+      else if(status == 2){
+        arg.push_back(command[i]);
+      }
+      else{
+        status = 1;
+      }
     }
-    else if (insideSQ)
+    else if(command[i] == '"'){
+      if(status == 2){
+        status = 0;
+      }
+      else if(status == 1){
+        arg.push_back(command[i]);
+      }
+      else{
+        status = 2;
+      }
+    }
+    else if (status == 1 || status == 2)
     {
       arg.push_back(command[i]);
     }
