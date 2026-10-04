@@ -53,13 +53,8 @@ std::vector<std::string> split(std::string command, char spliter)
         i++;
         arg.push_back(command[i]);
       }else{
-        if(command[i + 1] == '\\'){
-          i++;
-          arg.push_back(command[i]);
-        }
+        arg.push_back(command[i]);        
       }
-      
-      
     }
     else if (command[i] == '\'')
     {
