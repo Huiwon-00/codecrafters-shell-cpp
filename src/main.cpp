@@ -50,7 +50,7 @@ std::vector<std::string> split(std::string command, char spliter)
   {
     if(command[i] == '\\'){
       i + 1;
-      arg.push_back(command[i])
+      arg.push_back(command[i]);
     }
     else if (command[i] == '\'' )
     {
