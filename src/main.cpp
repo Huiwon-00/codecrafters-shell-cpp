@@ -9,7 +9,7 @@ int main()
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
   std::string command;
-  std::unordered_set<std::string> types = {"exit", "echo", "type", "pwd", "cd"};
+  std::unordered_set<std::string> builtins = {"exit", "echo", "type", "pwd", "cd"};
   std::string filepath(std::getenv("PATH"));
 
   std::vector<std::string> paths = split(filepath, ':');
@@ -32,7 +32,7 @@ int main()
     else if (arguments[0] == "cd")
       cd(arguments, current_directory);
     else if (arguments[0] == "type")
-      type(arguments, paths, types);
+      type(arguments, paths, builtins);
     else
       executable(arguments, paths);
   }

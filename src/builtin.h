@@ -44,12 +44,12 @@ void cd(std::vector<std::string> arguments, std::string& current_directory){
       }
 }
 
-void type(std::vector<std::string> arguments, std::vector<std::string> paths, std::unordered_set<std::string> types){
+void type(std::vector<std::string> arguments, std::vector<std::string> paths, std::unordered_set<std::string> builtins){
     bool typeDone = false;
     if(arguments.size() == 1){
     return;
     }
-    if(types.contains(arguments[1])){
+    if(builtins.contains(arguments[1])){
     std::cout << arguments[1] << " is a shell builtin" << std::endl;
     typeDone = true;
     }
