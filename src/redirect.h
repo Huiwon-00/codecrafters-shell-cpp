@@ -24,15 +24,10 @@ void restore(int restore_fd){
 std::string remove_redirect_sign(std::vector<std::string>& arguments){
     std::string file;
     for(int i = 0; i < arguments.size(); i++){
-        if (arguments[i] == ">"){
+        if (arguments[i] == ">" || arguments[i] == "1>"){
             if(i < arguments.size() - 1){
                 file = arguments[i + 1];
-                if(i > 0 && arguments[i - 1] == "1"){
-                    arguments.erase(arguments.begin() + i - 1, arguments.begin() + i + 2);
-                }
-                else{
-                    arguments.erase(arguments.begin() + i, arguments.begin() + i + 2);
-                }
+                arguments.erase(arguments.begin() + i, arguments.begin() + i + 2);
                 break;
             }
             else{
