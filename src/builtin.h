@@ -92,10 +92,10 @@ void executable(std::vector<std::string> arguments, std::vector<std::string> pat
     arguments_c.push_back(nullptr);
     pid_t pid = fork();
     if(pid == 0){
-      execv(fullpath.c_str(), arguments_c.data());
       if(!file.empty()){
         int x = R_stdout(file);
       }
+      execv(fullpath.c_str(), arguments_c.data());
       std::exit(1);
     }
     else{
