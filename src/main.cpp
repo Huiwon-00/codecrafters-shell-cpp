@@ -38,6 +38,9 @@ int main()
         else if(redirectType == 3){
           restore_fd = R_append(file);
         }
+        else if(redirectType == 4){
+          restore_fd = R_append_stderr(file);
+        }
       }
     }
     if (arguments[0] == "exit")

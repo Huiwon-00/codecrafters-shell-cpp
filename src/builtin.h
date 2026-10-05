@@ -92,6 +92,9 @@ void executable(int redirectType, std::vector<std::string> arguments, std::vecto
         else if(redirectType == 3){
           int x = R_append(file);
         }
+        else if(redirectType == 4){
+          int x = R_append_stderr(file);
+        }
       }
       execv(fullpath.c_str(), arguments_c.data());
       std::exit(1);
