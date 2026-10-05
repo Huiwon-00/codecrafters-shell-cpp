@@ -71,7 +71,7 @@ void type(std::vector<std::string> arguments, std::vector<std::string> paths, st
     }
 }
 
-void executable(std::vector<std::string> arguments, std::vector<std::string> paths, std::string file){
+void executable(int redirectType, std::vector<std::string> arguments, std::vector<std::string> paths, std::string file){
   std::string exCommand = arguments[0];
   std::string fullpath;
   bool exCommandDone = false;
@@ -93,7 +93,10 @@ void executable(std::vector<std::string> arguments, std::vector<std::string> pat
     pid_t pid = fork();
     if(pid == 0){
       if(!file.empty()){
-        int x = R_stdout(file);
+        if(redirectType == 1)
+          int x = R_stdout(file);
+        else if(redirectType == 2)
+          int x = R_stderr(file);
       }
       execv(fullpath.c_str(), arguments_c.data());
       std::exit(1);

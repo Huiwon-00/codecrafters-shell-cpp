@@ -24,11 +24,16 @@ int main()
     std::vector<std::string> arguments = split(command, ' ');
     if (arguments.empty())
       continue;
-    std::string file = remove_redirect_sign(arguments);
+    auto [redirectType, file] = remove_redirect_sign(arguments);
     int restore_fd = -1;
     if(!file.empty()){
       if(builtins.contains(arguments[0])){
-        restore_fd= R_stdout(file);
+        if(redirectType == 1){
+          restore_fd= R_stdout(file);
+        }
+        else if(redirectType == 2){
+          restore_fd = R_stderr(file);
+        }
       }
     }
     if (arguments[0] == "exit")
@@ -42,7 +47,7 @@ int main()
     else if (arguments[0] == "type")
       type(arguments, paths, builtins);
     else
-      executable(arguments, paths, file);
+      executable(redirectType, arguments, paths, file);
     if(restore_fd!= -1){
       restore(restore_fd);
     }
