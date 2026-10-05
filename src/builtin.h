@@ -6,6 +6,7 @@
 #include <vector>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "redirect.h"
 
 
 void echo(std::vector<std::string> arguments){
@@ -70,35 +71,38 @@ void type(std::vector<std::string> arguments, std::vector<std::string> paths, st
     }
 }
 
-void executable(std::vector<std::string> arguments, std::vector<std::string> paths){
-    std::string exCommand = arguments[0];
-      std::string fullpath;
-      bool exCommandDone = false;
-      for (std::string p : paths){ 
-        fullpath = p + "/" + exCommand;
-        //std::cout << fullpath << std::endl;
-        if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
-          exCommandDone = true;
-          break;
-        } 
-      } 
-      
-      if(exCommandDone){
-        std::vector<char*> arguments_c;
-        for(std::string& s: arguments){
-          arguments_c.push_back(s.data());
-        }
-        arguments_c.push_back(nullptr);
-        pid_t pid = fork();
-        if(pid == 0){
-          execv(fullpath.c_str(), arguments_c.data());
-          std::exit(1);
-        }
-        else{
-          waitpid(pid, nullptr, 0);
-        }
+void executable(std::vector<std::string> arguments, std::vector<std::string> paths, std::string file){
+  std::string exCommand = arguments[0];
+  std::string fullpath;
+  bool exCommandDone = false;
+  for (std::string p : paths){ 
+    fullpath = p + "/" + exCommand;
+    //std::cout << fullpath << std::endl;
+    if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
+      exCommandDone = true;
+      break;
+    } 
+  } 
+  
+  if(exCommandDone){
+    std::vector<char*> arguments_c;
+    for(std::string& s: arguments){
+      arguments_c.push_back(s.data());
+    }
+    arguments_c.push_back(nullptr);
+    pid_t pid = fork();
+    if(pid == 0){
+      execv(fullpath.c_str(), arguments_c.data());
+      if(!file.empty()){
+        int x = R_stdout(file);
       }
-      else{
-        std::cout << arguments[0] << ": command not found" << std::endl;
-      }
+      std::exit(1);
+    }
+    else{
+      waitpid(pid, nullptr, 0);
+    }
+  }
+  else{
+    std::cout << arguments[0] << ": command not found" << std::endl;
+  }
 }

@@ -1,4 +1,5 @@
 #include "builtin.h"
+#include "redirect.h"
 
 namespace fs = std::filesystem;
 std::vector<std::string> split(std::string, char);
@@ -23,6 +24,13 @@ int main()
     std::vector<std::string> arguments = split(command, ' ');
     if (arguments.empty())
       continue;
+    std::string file = remove_redirect_sign(arguments);
+    int restore_fd = -1;
+    if(!file.empty()){
+      if(builtins.contains(arguments[0])){
+        restore_fd= R_stdout(file);
+      }
+    }
     if (arguments[0] == "exit")
       break;
     else if (arguments[0] == "echo")
@@ -34,7 +42,10 @@ int main()
     else if (arguments[0] == "type")
       type(arguments, paths, builtins);
     else
-      executable(arguments, paths);
+      executable(arguments, paths, file);
+    if(restore_fd!= -1){
+      restore(restore_fd);
+    }
   }
 }
 
