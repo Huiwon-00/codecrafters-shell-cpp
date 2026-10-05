@@ -1,13 +1,5 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <unordered_set>
-#include <filesystem>
-#include <vector>
-#include <sys/wait.h>
-#include <unistd.h>
 #include "redirect.h"
-
 
 void echo(std::vector<std::string> arguments){
     if(arguments.size() > 1) {
@@ -97,6 +89,9 @@ void executable(int redirectType, std::vector<std::string> arguments, std::vecto
           int x = R_stdout(file);
         else if(redirectType == 2)
           int x = R_stderr(file);
+        else if(redirectType == 3){
+          int x = R_append(file);
+        }
       }
       execv(fullpath.c_str(), arguments_c.data());
       std::exit(1);

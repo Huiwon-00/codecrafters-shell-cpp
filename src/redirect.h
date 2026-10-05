@@ -24,6 +24,14 @@ int R_stderr(std::string file){
     return restore_fd;
 }
 
+int R_append(std::string file){
+    int fd = open(file.c_str(), O_CREAT | O_APPEND| O_WRONLY, 0644);
+    int restore_fd = dup(1);
+    dup2(fd, 1);
+    close(fd);
+    return restore_fd;
+}
+
 void restore(int restore_fd){
     dup2(restore_fd, 1);
     close(restore_fd);
@@ -33,12 +41,15 @@ std::pair<int, std::string> remove_redirect_sign(std::vector<std::string>& argum
     std::string file;
     int redirectType = 0;
     for(int i = 0; i < arguments.size(); i++){
-        if (arguments[i] == ">" || arguments[i] == "1>" || arguments[i] == "2>"){
+        if (arguments[i] == ">" || arguments[i] == "1>" || arguments[i] == "2>" || arguments[i] == "1>>" || arguments[i] == ">>"){
             if(arguments[i] == "2>"){
                 redirectType = 2;
             }
-            else{
+            else if(arguments[i] == ">"|| arguments[i] == "1>"){
                 redirectType = 1;
+            }
+            else{
+                redirectType = 3;
             }
             if(i < arguments.size() - 1){
                 file = arguments[i + 1];

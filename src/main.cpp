@@ -1,3 +1,4 @@
+#pragma once
 #include "builtin.h"
 #include "redirect.h"
 
