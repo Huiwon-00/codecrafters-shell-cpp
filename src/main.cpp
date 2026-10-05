@@ -35,6 +35,9 @@ int main()
         else if(redirectType == 2){
           restore_fd = R_stderr(file);
         }
+        else if(redirectType == 3){
+          restore_fd = R_append(file);
+        }
       }
     }
     if (arguments[0] == "exit")
@@ -50,7 +53,7 @@ int main()
     else
       executable(redirectType, arguments, paths, file);
     if(restore_fd!= -1){
-      restore(restore_fd);
+      restore(restore_fd, redirectType);
     }
   }
 }

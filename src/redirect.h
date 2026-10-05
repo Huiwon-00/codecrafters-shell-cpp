@@ -32,8 +32,15 @@ int R_append(std::string file){
     return restore_fd;
 }
 
-void restore(int restore_fd){
-    dup2(restore_fd, 1);
+void restore(int restore_fd, int redirectType){
+    int restor_to;
+    if(redirectType == 1 || redirectType == 3){
+        restor_to = 1;
+    }
+    else{
+        restor_to = 2;
+    }
+    dup2(restore_fd, restor_to);
     close(restore_fd);
 }
 
