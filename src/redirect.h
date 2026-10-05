@@ -27,7 +27,12 @@ std::string remove_redirect_sign(std::vector<std::string>& arguments){
         if (arguments[i] == ">"){
             if(i < arguments.size() - 1){
                 file = arguments[i + 1];
-                arguments.erase(arguments.begin() + i, arguments.begin() + i + 2);
+                if(i > 0 && arguments[i - 1] == "1"){
+                    arguments.erase(arguments.begin() + i - 1, arguments.begin() + i + 2);
+                }
+                else{
+                    arguments.erase(arguments.begin() + i, arguments.begin() + i + 2);
+                }
                 break;
             }
             else{
