@@ -1,6 +1,8 @@
 #pragma once
 #include "redirect.h"
 
+std::string find_external_file_path(std::string cmd, std::vector<std::string> paths);
+
 void echo(std::vector<std::string> arguments){
     if(arguments.size() > 1) {
         for(size_t i = 1; i < arguments.size(); i++){
@@ -43,20 +45,15 @@ void type(std::vector<std::string> arguments, std::vector<std::string> paths, st
     return;
     }
     if(builtins.contains(arguments[1])){
-    std::cout << arguments[1] << " is a shell builtin" << std::endl;
-    typeDone = true;
+      std::cout << arguments[1] << " is a shell builtin" << std::endl;
+      typeDone = true;
     }
     else if( !typeDone ){
-        std::string fullpath ;
-        for (std::string p : paths){ 
-            fullpath = p + "/" + arguments[1];
-            //std::cout << fullpath << std::endl;
-            if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
-                std::cout << arguments[1] << " is " << fullpath << std::endl;
-                typeDone = true;
-                break;
-            } 
-        } 
+        std::string fullpath = find_external_file_path(arguments[1], paths);
+        if(!fullpath.empty()){
+            std::cout << arguments[1] << " is " << fullpath << std::endl;
+            typeDone = true;
+        }
     }
         if(!typeDone){
         std::cout << arguments[1] << ": not found" << std::endl;
@@ -65,18 +62,9 @@ void type(std::vector<std::string> arguments, std::vector<std::string> paths, st
 
 void executable(int redirectType, std::vector<std::string> arguments, std::vector<std::string> paths, std::string file){
   std::string exCommand = arguments[0];
-  std::string fullpath;
-  bool exCommandDone = false;
-  for (std::string p : paths){ 
-    fullpath = p + "/" + exCommand;
-    //std::cout << fullpath << std::endl;
-    if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
-      exCommandDone = true;
-      break;
-    } 
-  } 
-  
-  if(exCommandDone){
+  std::string fullpath = find_external_file_path(exCommand, paths);
+
+  if(!fullpath.empty()){
     std::vector<char*> arguments_c;
     for(std::string& s: arguments){
       arguments_c.push_back(s.data());
@@ -106,4 +94,16 @@ void executable(int redirectType, std::vector<std::string> arguments, std::vecto
   else{
     std::cout << arguments[0] << ": command not found" << std::endl;
   }
+}
+
+std::string find_external_file_path(std::string cmd, std::vector<std::string> paths){
+  std::string fullpath;
+  for (std::string p : paths){ 
+    fullpath = p + "/" + cmd;
+    //std::cout << fullpath << std::endl;
+    if (std::filesystem::is_regular_file(fullpath) && access (fullpath.c_str(), X_OK) == 0){
+      return fullpath;
+    } 
+  } 
+  return "";
 }
