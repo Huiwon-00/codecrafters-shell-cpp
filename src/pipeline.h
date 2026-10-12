@@ -13,9 +13,8 @@ void pipeline(std::vector<std::string> arguments, std::vector<std::string> paths
     std::unordered_set<std::string> builtins, std::string current_directory){
     std::vector<std::vector<std::string>> commands;
     std::vector<std::string> cmd0;
-    bool cmd_decider {true};
-    int j {0};
-    for(int i = 0; i < arguments.size(); i++){
+    size_t j {0};
+    for(size_t i = 0; i < arguments.size(); i++){
         cmd0.push_back(arguments[i]);
         if(i + 1 == arguments.size() || arguments[i + 1] == "|"){
             commands.push_back(cmd0);
@@ -30,7 +29,7 @@ void pipeline(std::vector<std::string> arguments, std::vector<std::string> paths
     int fds[2];
     int prevRead;
 
-    for(int i = 0; i < commands.size(); i++){
+    for(size_t i = 0; i < commands.size(); i++){
         if(i != 0){
             prevRead = fds[0];
         }

@@ -74,14 +74,14 @@ void executable(int redirectType, std::vector<std::string> arguments, std::vecto
     if(pid == 0){
       if(!file.empty()){
         if(redirectType == 1)
-          int x = R_stdout(file);
+          R_stdout(file);
         else if(redirectType == 2)
-          int x = R_stderr(file);
+          R_stderr(file);
         else if(redirectType == 3){
-          int x = R_append(file);
+          R_append(file);
         }
         else if(redirectType == 4){
-          int x = R_append_stderr(file);
+          R_append_stderr(file);
         }
       }
       execv(fullpath.c_str(), arguments_c.data());

@@ -55,7 +55,7 @@ void restore(int restore_fd, int redirectType){
 std::pair<int, std::string> remove_redirect_sign(std::vector<std::string>& arguments){
     std::string file;
     int redirectType = 0;
-    for(int i = 0; i < arguments.size(); i++){
+    for(size_t i = 0; i < arguments.size(); i++){
         if (arguments[i] == ">" || arguments[i] == "1>" || arguments[i] == "2>" || 
             arguments[i] == "1>>" || arguments[i] == ">>" || arguments[i] == "2>>"){
             if(arguments[i] == "2>"){

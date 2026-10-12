@@ -1,4 +1,3 @@
-#pragma once
 #include "builtin.h"
 #include "redirect.h"
 #include "pipeline.h"
@@ -71,7 +70,6 @@ std::vector<std::string> split(std::string command, char spliter){
   std::vector<int> nums {0, 1, 2};
   int QuoteStatus = 0;
   std::vector<std::string> arguments;
-  bool insideSQ = false;
   std::string arg;
 
   for(size_t i = 0; i < command.length(); i++){
