@@ -94,6 +94,10 @@ void executable(int redirectType, std::vector<std::string>& arguments,
     }
     arguments_c.push_back(nullptr);
     pid_t pid = fork();
+    if(pid == -1){
+        perror("fork failed");
+        return;
+    }
     if(pid == 0){
       int redirectOk = 0;
       if(!file.empty()){
@@ -110,7 +114,11 @@ void executable(int redirectType, std::vector<std::string>& arguments,
       }
       if(redirectOk == -1)
         std::exit(1);
-      execv(fullpath.c_str(), arguments_c.data());
+      int execvErr {0};
+      execvErr = execv(fullpath.c_str(), arguments_c.data());
+      if(execvErr == -1){
+        perror(fullpath.c_str());
+      }
       std::exit(1);
     }
     else{

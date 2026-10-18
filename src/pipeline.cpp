@@ -35,22 +35,41 @@ void pipeline(const std::vector<std::string>& arguments, const std::vector<std::
             prevRead = fds[0];
         }
         if(i != commands.size() - 1){
-            pipe(fds);
+            if(pipe(fds) == -1){
+                perror("pipe creation failed");
+                return;
+            }
         }
         pid_t pid = fork();
+        if(pid == -1){
+            perror("fork failed");
+            return;
+        }
         if(pid == 0){
             if(i == 0){
-                dup2(fds[1], STDOUT_FILENO); 
+                if(dup2(fds[1], STDOUT_FILENO) == -1){
+                    perror("dup2 failed to redirect");
+                    std::exit(1);
+                }
                 close(fds[1]);
                 close(fds[0]);
             }
             else if(i == commands.size() - 1){
-                dup2(prevRead, STDIN_FILENO);
+                if(dup2(prevRead, STDIN_FILENO) == -1){
+                    perror("dup2 failed to redirect");
+                    std::exit(1);
+                }
                 close(prevRead);
             }
             else{
-                dup2(prevRead, STDIN_FILENO);
-                dup2(fds[1], STDOUT_FILENO);
+                if(dup2(prevRead, STDIN_FILENO) == -1){
+                    perror("dup2 failed to redirect");
+                    std::exit(1);
+                }
+                if(dup2(fds[1], STDOUT_FILENO) == -1){
+                    perror("dup2 failed to redirect");
+                    std::exit(1);
+                }
                 close(prevRead);
                 close(fds[1]);
                 close(fds[0]);
@@ -62,7 +81,11 @@ void pipeline(const std::vector<std::string>& arguments, const std::vector<std::
                         arguments_c.push_back(s.data());
                     }
                     arguments_c.push_back(nullptr);
-                    execv(fullpath.c_str(), arguments_c.data());
+                    int execvErr {0};
+                    execvErr = execv(fullpath.c_str(), arguments_c.data());
+                    if(execvErr == -1){
+                        perror(fullpath.c_str());
+                    }
                 }
                 else{
                     std::cerr << commands[i][0] << ": command not found" << std::endl;
